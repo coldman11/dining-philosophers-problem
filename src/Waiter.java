@@ -1,6 +1,9 @@
+import java.util.ArrayList;
+
 public class Waiter {
     Semaphore[] forks;
     int philosopherCount;
+    private ArrayList philosophers = new ArrayList();
     int philosophersPickedUp;
     public Waiter (int philosopherCount) {
         this.philosopherCount = philosopherCount;
@@ -13,13 +16,20 @@ public class Waiter {
         }
     }
     public void pickUp(int index) {
-        if (philosophersPickedUp <= this.philosopherCount - 1) {
+
+        if (this.philosophers.size() <= this.philosopherCount - 1) {
             this.forks[index].P();
-            this.philosophersPickedUp++;
+            if (!this.philosophers.contains(index)) {
+                this.philosophers.add(index);
+                this.philosophersPickedUp = this.philosophers.size();
+            }
         }
     }
     public void putDown(int index) {
-        this.philosophersPickedUp--;
         this.forks[index].V();
+        if (this.philosophers.contains(index)) {
+            this.philosophers.remove(this.philosophers.indexOf(index));
+        }
+        this.philosophersPickedUp = this.philosophers.size();
     }
 }
